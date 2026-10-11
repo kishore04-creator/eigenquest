@@ -1,0 +1,139 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* Layout concept: a glass "control deck" over a drifting colour field. One memorable thing:
+   the live vector sweep that shows A·v lining up with v on eigen-directions. */
+:root {
+  --bg: #f3f0ff;
+  --fg: #1b1640;
+  --muted: #55507f;
+  --line: rgba(80, 60, 160, 0.2);
+  --glass: rgba(255, 255, 255, 0.66);
+  --glass-strong: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --shadow: 0 14px 44px -16px rgba(76, 29, 149, 0.35);
+  --violet: #6d28d9;
+  --blue: #1d4ed8;
+  --cyan: #0e7490;
+  --pink: #be185d;
+  --orange: #c2410c;
+  --good: #047857;
+  --warn: #b45309;
+  --bad: #b91c1c;
+  --good-bg: rgba(16, 185, 129, 0.14);
+  --warn-bg: rgba(245, 158, 11, 0.16);
+  --bad-bg: rgba(239, 68, 68, 0.13);
+  --info-bg: rgba(59, 130, 246, 0.12);
+  --tip-bg: rgba(168, 85, 247, 0.12);
+  --math-bg: rgba(109, 40, 217, 0.07);
+  --blob-violet: #8b5cf6;
+  --blob-cyan: #22d3ee;
+  --blob-pink: #f472b6;
+  --blob-orange: #fb923c;
+  --btn-from: #6d28d9;
+  --btn-to: #db2777;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0720; --fg: #efeaff; --muted: #b0aadb; --line: rgba(190, 170, 255, 0.2);
+    --glass: rgba(28, 20, 70, 0.58); --glass-strong: rgba(36, 26, 88, 0.85); --glass-border: rgba(255, 255, 255, 0.13);
+    --shadow: 0 16px 50px -18px rgba(0, 0, 0, 0.8);
+    --violet: #b79cff; --blue: #7db0ff; --cyan: #4fe0f5; --pink: #ff8ac3; --orange: #ffa766;
+    --good: #4ade9c; --warn: #fbbf24; --bad: #ff8585;
+    --good-bg: rgba(52, 211, 153, 0.15); --warn-bg: rgba(251, 191, 36, 0.14); --bad-bg: rgba(248, 113, 113, 0.15);
+    --info-bg: rgba(96, 165, 250, 0.15); --tip-bg: rgba(192, 132, 252, 0.16); --math-bg: rgba(167, 139, 250, 0.1);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0720; --fg: #efeaff; --muted: #b0aadb; --line: rgba(190, 170, 255, 0.2);
+  --glass: rgba(28, 20, 70, 0.58); --glass-strong: rgba(36, 26, 88, 0.85); --glass-border: rgba(255, 255, 255, 0.13);
+  --shadow: 0 16px 50px -18px rgba(0, 0, 0, 0.8);
+  --violet: #b79cff; --blue: #7db0ff; --cyan: #4fe0f5; --pink: #ff8ac3; --orange: #ffa766;
+  --good: #4ade9c; --warn: #fbbf24; --bad: #ff8585;
+  --good-bg: rgba(52, 211, 153, 0.15); --warn-bg: rgba(251, 191, 36, 0.14); --bad-bg: rgba(248, 113, 113, 0.15);
+  --info-bg: rgba(96, 165, 250, 0.15); --tip-bg: rgba(192, 132, 252, 0.16); --math-bg: rgba(167, 139, 250, 0.1);
+  color-scheme: dark;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(52rem 34rem at 8% -8%, color-mix(in oklab, var(--blob-violet) 42%, transparent), transparent 62%),
+    radial-gradient(46rem 32rem at 100% 2%, color-mix(in oklab, var(--blob-cyan) 30%, transparent), transparent 62%),
+    radial-gradient(48rem 36rem at 88% 108%, color-mix(in oklab, var(--blob-pink) 30%, transparent), transparent 62%),
+    radial-gradient(40rem 30rem at -4% 100%, color-mix(in oklab, var(--blob-orange) 24%, transparent), transparent 62%);
+}
+h1, h2, h3, h4, .display { font-family: 'Bricolage Grotesque', 'Figtree', ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.02em; text-wrap: balance; }
+:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; border-radius: 6px; }
+
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow);
+}
+.glass-flat { background: var(--glass-strong); border: 1px solid var(--line); border-radius: 1rem; }
+.grad-text { background: linear-gradient(95deg, var(--violet), var(--pink) 55%, var(--orange)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.muted { color: var(--muted); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .7rem 1.25rem; border-radius: 999px; font-weight: 700; cursor: pointer; border: 1px solid transparent; transition: transform .15s ease, box-shadow .2s ease, background .2s; font-size: 1rem; line-height: 1.2; }
+.btn:active { transform: translateY(1px) scale(.99); }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+.btn-primary { color: #fff; background: linear-gradient(100deg, var(--btn-from), var(--btn-to)); box-shadow: 0 10px 28px -10px var(--btn-from); }
+.btn-primary:hover:not([disabled]) { box-shadow: 0 14px 34px -8px var(--btn-to); transform: translateY(-1px); }
+.btn-cyan { color: #06222b; background: linear-gradient(100deg, #22d3ee, #60a5fa); }
+.btn-ghost { background: var(--glass-strong); color: var(--fg); border-color: var(--line); }
+.btn-ghost:hover:not([disabled]) { border-color: var(--violet); }
+.btn-lg { padding: 1rem 1.75rem; font-size: 1.125rem; }
+.btn-sm { padding: .4rem .85rem; font-size: .875rem; }
+
+.chip { display: inline-flex; align-items: center; gap: .35rem; padding: .2rem .7rem; border-radius: 999px; font-size: .8rem; font-weight: 700; background: var(--math-bg); border: 1px solid var(--line); }
+
+.math-block { background: var(--math-bg); border-radius: 1rem; padding: .85rem 1.1rem; overflow-x: auto; overflow-y: hidden; max-width: 100%; }
+.math-block .katex-display { margin: .15em 0; }
+.math-block .katex { font-size: 1.22em; }
+.tex-inline .katex { font-size: 1.06em; }
+
+.cell {
+  width: 100%; min-width: 0; text-align: center; font-size: 1.25rem; font-weight: 600; padding: .65rem .25rem;
+  border-radius: .85rem; border: 2px solid var(--line); background: var(--glass-strong); color: var(--fg);
+  font-variant-numeric: tabular-nums; transition: border-color .15s, box-shadow .15s;
+}
+.cell:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 4px color-mix(in oklab, var(--violet) 25%, transparent); }
+.cell[aria-invalid="true"] { border-color: var(--bad); background: var(--bad-bg); }
+.field { padding: .6rem .9rem; border-radius: .85rem; border: 2px solid var(--line); background: var(--glass-strong); color: var(--fg); font: inherit; min-width: 0; }
+.field:focus { outline: none; border-color: var(--violet); }
+
+.bar { height: .6rem; border-radius: 999px; background: var(--math-bg); overflow: hidden; border: 1px solid var(--line); }
+.bar > i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #22d3ee, #8b5cf6 55%, #ec4899); transition: width .6s cubic-bezier(.2,.8,.2,1); }
+
+.tab-scroll { scrollbar-width: none; }
+.tab-scroll::-webkit-scrollbar { display: none; }
+
+@keyframes drift { 0% { transform: translate3d(0, 0, 0) rotate(0deg); } 50% { transform: translate3d(14px, -26px, 0) rotate(8deg); } 100% { transform: translate3d(0, 0, 0) rotate(0deg); } }
+.sym { position: fixed; z-index: -1; pointer-events: none; font-family: 'Bricolage Grotesque', serif; font-weight: 800; opacity: .13; color: var(--violet); animation: drift 14s ease-in-out infinite; user-select: none; }
+@keyframes check-draw { to { stroke-dashoffset: 0; } }
+.check-path { stroke-dasharray: 48; stroke-dashoffset: 48; animation: check-draw .6s .1s ease-out forwards; }
+@keyframes pulse-ring { 0% { transform: scale(.6); opacity: .8; } 100% { transform: scale(1.8); opacity: 0; } }
+.pulse-ring { animation: pulse-ring 1.1s ease-out 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  .sym { display: none; }
+}
